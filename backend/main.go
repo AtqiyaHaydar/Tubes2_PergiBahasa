@@ -1,15 +1,35 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+
 	"github.com/gocolly/colly"
-	"github.com/PuerkittoBio/goquery"
-	"encoding/json"
 )
 
 func main() {
-	http.HandleFunc("/api/scape", handleScrape)
-	http.ListenAndServe(":8080", nil) // Ini Tergantung Port Kira
+	result := scrape("pertamina") // hanya contoh
+	for i := 0; i < len(result); i++ {
+		fmt.Println(result[i])
+	}
 }
 
-func handleScrape(w http.ResponseWriter, r *http.Request) {}
+func scrape(articleName string) []string {
+
+	var links []string
+
+	// creating a new Colly instance
+	c := colly.NewCollector()
+
+	// visiting the target page
+	c.OnHTML("div#mw-content-text a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		if link[:6] == "/wiki/" {
+			links = append(links, link[6:])
+		}
+
+	})
+
+	c.Visit("https://en.wikipedia.org/wiki/" + articleName)
+
+	return links
+}
