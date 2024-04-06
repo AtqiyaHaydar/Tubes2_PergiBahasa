@@ -7,14 +7,29 @@ type Node struct {
 	depth int
 }
 
-func makeNode(start string, links []string, _depth int, _trail []string) *Node {
+func makeNode(start string, _depth int, _trail []string) *Node {
 	return &Node{
-		link:  links,
+		link:  scrape(start),
 		depth: _depth,
 		name:  start,
 		trail: _trail,
 	}
 }
+
+// INITIAL NODE, parent = makeNode("Test",0,{})
+//
+// MAKE CHILD, child = makeNode(parent.link[1],parent.depth + 1, append(parent.trail, parent.name))
+// alternatively. to make it simple, makechild(actor Node, index int)
+
+// fungsi ini tidak membuat semua Node children sekaligus, sehingga imo lebih ringan
+func makeChildAlt(parent Node, index int) *Node {
+	if index < len(parent.link) {
+		return nil
+	} else {
+	return	makeNode(parent.link[index], parent.depth + 1, append(parent.trail,parent.name))
+	}
+}
+
 
 // nanti diganti links dengan implementasi scrapper
 func makeChildren(start Node) []Node {
