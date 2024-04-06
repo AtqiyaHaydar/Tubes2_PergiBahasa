@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import StarsCanvas from "@/components/StarBackground";
+import { Toaster } from "@/components/ui/toaster";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className={`${montserrat.className} bg-[#030014]`}>
         <StarsCanvas />
         {children}
+        <Toaster />
       </body>
     </html>
   );
