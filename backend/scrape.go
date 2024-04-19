@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/gocolly/colly"
 )
 
@@ -14,7 +16,8 @@ func scrape(articleName string) []string {
 	// visiting the target page
 	c.OnHTML("div#mw-content-text a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		if link[:6] == "/wiki/" {
+		//fmt.Println(link)
+		if strings.Contains(link, "/wiki/") {
 			links = append(links, link[6:])
 		}
 
