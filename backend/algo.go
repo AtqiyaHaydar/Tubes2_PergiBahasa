@@ -16,6 +16,14 @@ func makeNode(start string, _depth int, _trail []string) *Node {
 	}
 }
 
+func newNode(start string, _depth int, _trail []string) *Node {
+	return &Node{
+		depth: _depth,
+		name:  start,
+		trail: _trail,
+	}
+}
+
 // INITIAL NODE, parent = makeNode("Test",0,{})
 //
 // MAKE CHILD, child = makeNode(parent.link[1],parent.depth + 1, append(parent.trail, parent.name))
@@ -26,10 +34,9 @@ func makeChildAlt(parent Node, index int) *Node {
 	if index < len(parent.link) {
 		return nil
 	} else {
-	return	makeNode(parent.link[index], parent.depth + 1, append(parent.trail,parent.name))
+		return makeNode(parent.link[index], parent.depth+1, append(parent.trail, parent.name))
 	}
 }
-
 
 // nanti diganti links dengan implementasi scrapper
 func makeChildren(start Node) []Node {

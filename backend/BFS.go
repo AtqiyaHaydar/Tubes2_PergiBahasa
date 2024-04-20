@@ -65,17 +65,3 @@ func printNode(_node Node) {
 		fmt.Println(_node.trail[i])
 	}
 }
-
-// func main() {
-// 	start := time.Now()
-// 	container2, articleAmmount := BFS("8-bit_computing", "Computer_science")
-// 	fmt.Println("FOUND")
-// 	fmt.Println(articleAmmount)
-// 	t := time.Now()
-// 	elapsed := t.Sub(start)
-// 	fmt.Println(elapsed)
-// 	for i := 0; i < len(container2); i++ {
-// 		printNode(container2[i])
-// 		fmt.Println()
-// 	}
-// }
