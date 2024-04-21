@@ -39,17 +39,17 @@ func makeChildAlt(parent Node, index int) *Node {
 }
 
 // nanti diganti links dengan implementasi scrapper
-func makeChildren(start Node) []Node {
-	var tempStr []string = scrape(start.name)
-	var result []Node
-	for i := 0; i < len(tempStr); i++ {
-		var tempNode Node
-		var container []string
-		tempNode = *makeNode(tempStr[i], container, start.depth+1, append(start.trail, start.name))
-		result = append(result, tempNode)
-	}
-	return result
-}
+// func makeChildren(start Node) []Node {
+// 	var tempStr []string = scrape(start.name)
+// 	var result []Node
+// 	for i := 0; i < len(tempStr); i++ {
+// 		var tempNode Node
+// 		var container []string
+// 		tempNode = *makeNode(tempStr[i], container, start.depth+1, append(start.trail, start.name))
+// 		result = append(result, tempNode)
+// 	}
+// 	return result
+// }
 
 // func IDS(Node actor,name target, maxdepth int) []Node{
 // 	//seek
