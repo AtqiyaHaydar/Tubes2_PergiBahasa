@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gammazero/deque"
 )
@@ -57,14 +58,14 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 		ammtOfArticles += 1
 		fmt.Println(livingNode.name)
 		fmt.Println(livingNode.depth)
-		if livingNode.name == tujuan {
+		if strings.EqualFold(livingNode.name, tujuan) { //livingNode.name == tujuan
 			flag = true
 			result = append(result, livingNode)
 		} else {
+			visited[livingNode.name] = true
 			tempNode2 := *newNode(livingNode.name, livingNode.depth, livingNode.trail)
 			buffer2.PushBack(tempNode2)
 		}
-		visited[livingNode.name] = true
 	}
 	return result, ammtOfArticles
 }

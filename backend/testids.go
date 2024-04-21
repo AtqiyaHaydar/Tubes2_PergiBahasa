@@ -27,7 +27,7 @@ func main() {
 	flag := make(chan bool)
 	go clock(flag)
 	flag <- false
-	result, someInt := BFS("Institut_Teknologi_Bandung", "Mohammad_Hatta")
+	result, someInt := BFS("Nintendo_Entertainment_System", "Slot_machine")
 	flag <- true
 	//MUTEX BABEY
 	//var thing []string = scrape("File:Diploma_icon.png")
