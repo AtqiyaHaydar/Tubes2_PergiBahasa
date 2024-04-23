@@ -87,7 +87,7 @@ export default function Home() {
       {/* Input Artikel Awal dan Tujuan */}
       <div className="flex flex-col md:flex-row justify-between gap-8 py-4 items-center">
         <div className="flex flex-col items-center gap-y-2">
-          <p className="font-bold text-white ">Artikel Awal</p>
+          <p className="font-bold text-white">Artikel Awal</p>
           <Input 
             type="text"
             className="w-[300px] z-[20]"
