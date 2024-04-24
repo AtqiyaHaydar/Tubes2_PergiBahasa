@@ -1,5 +1,9 @@
 package main
 
+import (
+	"tubes2/crawl"
+)
+
 type Node struct {
 	name  string
 	trail []string
@@ -9,7 +13,7 @@ type Node struct {
 
 func makeNode(start string, _depth int, _trail []string) *Node {
 	return &Node{
-		link:  scrape(start),
+		link:  crawl.Scrape(start),
 		depth: _depth,
 		name:  start,
 		trail: _trail,

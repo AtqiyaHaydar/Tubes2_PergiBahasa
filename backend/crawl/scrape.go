@@ -1,4 +1,4 @@
-package main
+package crawl
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func scrape(articleName string) []string {
+func Scrape(articleName string) []string {
 
 	var links []string
 

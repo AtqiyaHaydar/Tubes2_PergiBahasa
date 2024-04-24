@@ -57,7 +57,8 @@ export default function Home() {
         `http://localhost:8080/api/wikipedia?query=${encodeURIComponent(value)}`
       );
   
-      setSearchTerm(response.data.query.search.map((item: any) => item.title));
+      setSearchTerm(response.data.query.search);
+      console.log(response.data.query.search);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -109,13 +110,15 @@ export default function Home() {
                   {searchTerm.map((item, index) => (
                     <li 
                       key={index} 
-                      className="text-black px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5"
+                      className="text-black px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
                       onClick={() => {
                         setQuery(item)
                         setSearchTerm([])
                         setIsSelectOpen(false)
                       }}
-                    >{item}</li>
+                    >
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </ScrollArea>
