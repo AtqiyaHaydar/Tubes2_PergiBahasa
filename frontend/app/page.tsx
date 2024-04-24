@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
@@ -14,11 +15,22 @@ import {
 } from "@/components/ui/tooltip"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+interface SearchResultI {
+  ns: number;
+  pageid: number;
+  size: number;
+  snippet: string;
+  thumbnail?: { source: string };
+  timestamp: string;
+  title: string;
+  wordcount: number;
+}
+
 export default function Home() {
   const [query, setQuery] = useState<string>(""); /* Judul Artikel Awal */
   const [objective, setObjective] = useState<string>(""); /* Judul Artikel Tujuan */
   const [algorithm, setAlgorithm] = useState<boolean>(false); /* Default IDS */
-  const [searchTerm, setSearchTerm] = useState<string[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API */
+  const [searchTerm, setSearchTerm] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API */
   const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API */
 
@@ -51,11 +63,19 @@ export default function Home() {
   /* Fungsi Menampilkan Hasil Pencarian Dari Query Dengan Wikipedia API */
   const handleQuery = async () => {
     const value = query.trim();
-  
+
     try {
+      if (value === "") {
+        setSearchTerm([]);
+        return;
+      }
+
+      console.log("Masuk Try Block Dengan Value", value)
+
       const response = await axios.get(
         `http://localhost:8080/api/wikipedia?query=${encodeURIComponent(value)}`
       );
+
   
       setSearchTerm(response.data.query.search);
       console.log(response.data.query.search);
@@ -110,14 +130,22 @@ export default function Home() {
                   {searchTerm.map((item, index) => (
                     <li 
                       key={index} 
-                      className="text-black px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
+                      className="text-black h-[100px] px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
                       onClick={() => {
-                        setQuery(item)
+                        setQuery(item.title)
                         setSearchTerm([])
                         setIsSelectOpen(false)
                       }}
                     >
-                      {item}
+                      {item.thumbnail && 
+                        <Image 
+                          src={item.thumbnail.source} 
+                          alt={item.title} 
+                          width={50}
+                          height={50}
+                        />
+                      }
+                      <p>{item.title}</p>
                     </li>
                   ))}
                 </ul>
