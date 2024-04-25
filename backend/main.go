@@ -32,31 +32,6 @@ func main() {
 }
 
 /* Fungsi IDS */
-func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "OPTIONS" {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
-	query := r.URL.Query().Get("query")
-	if query == "" {
-		http.Error(w, "Query parameter is required", http.StatusBadRequest)
-		return
-	}
-
-	/* Menerima Return Dari BFS */
-
-
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Allow requests from this origin
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseJSON)
-}
-
-/* Fungsi BFS */
 func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -66,14 +41,81 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := r.URL.Query().Get("query")
-	if query == "" {
+	awal := r.URL.Query().Get("query")
+	if awal == "" {
+		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+		return
+	}
+
+	akhir := r.URL.Query().Get("query2")
+	if akhir == "" {
 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
 		return
 	}
 
 	/* Menerima Return Dari IDS */
-	
+	resultArticle, visitArticle := IDSWrapper(awal, akhir) 
+
+	responseResultJSON, err := json.Marshal(resultArticle)
+	if err != nil {
+		http.Error(w, "Error encoding result JSON", http.StatusInternalServerError)
+		return
+	}
+
+	responseVisitJSON, err := json.Marshal(visitArticle)
+	if err != nil {
+		http.Error(w, "Error encoding visit JSON", http.StatusInternalServerError)
+		return
+	}
+
+	// Gabungkan respons JSON
+	responseJSON := append(responseResultJSON, responseVisitJSON...)
+
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Allow requests from this origin
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseJSON)
+}
+
+/* Fungsi BFS */
+func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "OPTIONS" {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	awal := r.URL.Query().Get("query")
+	if awal == "" {
+		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+		return
+	}
+
+	akhir := r.URL.Query().Get("query2")
+	if akhir == "" {
+		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+		return
+	}
+
+	/* Menerima Return Dari BFS */
+	resultArticle, visitArticle := BFS(awal, akhir) 
+
+	responseResultJSON, err := json.Marshal(resultArticle)
+	if err != nil {
+		http.Error(w, "Error encoding result JSON", http.StatusInternalServerError)
+		return
+	}
+
+	responseVisitJSON, err := json.Marshal(visitArticle)
+	if err != nil {
+		http.Error(w, "Error encoding visit JSON", http.StatusInternalServerError)
+		return
+	}
+
+	// Gabungkan respons JSON
+	responseJSON := append(responseResultJSON, responseVisitJSON...)
 
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Allow requests from this origin
 	w.Header().Set("Content-Type", "application/json")
