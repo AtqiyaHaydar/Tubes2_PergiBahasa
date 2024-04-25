@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 	"log"
 	"net/http"
 	"net/url"
+	"time"
+	"tubes2/crawl"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"tubes2/crawl"
 )
 
 func main() {
@@ -45,12 +46,14 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	awal := r.URL.Query().Get("query")
+	fmt.Println("AWALTOT ", awal)
 	if awal == "" {
 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
 		return
 	}
 
 	akhir := r.URL.Query().Get("query2")
+	fmt.Println("AHKIRTOT ", akhir)
 	if akhir == "" {
 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
 		return
@@ -59,7 +62,7 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 	go clock(flag)
 	flag <- false
 	/* Menerima Return Dari IDS */
-	resultArticle, visitArticle := IDSWrapper(awal, akhir) 
+	resultArticle, visitArticle := IDSWrapper(awal, akhir)
 	resultList := resultArticle[0].trail
 	flag <- true
 
@@ -107,7 +110,7 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	/* Menerima Return Dari BFS */
-	resultArticle, visitArticle := BFS(awal, akhir) 
+	resultArticle, visitArticle := BFS(awal, akhir)
 
 	responseResultJSON, err := json.Marshal(resultArticle)
 	if err != nil {
@@ -163,30 +166,29 @@ func handleScrape(w http.ResponseWriter, r *http.Request) {
 func handleWikipediaRequest(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	if query == "" {
-			http.Error(w, "Query parameter is required", http.StatusBadRequest)
-			return
+		http.Error(w, "Query parameter is required", http.StatusBadRequest)
+		return
 	}
 
 	wikipediaURL := "https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=" + url.QueryEscape(query)
 	response, err := http.Get(wikipediaURL)
 	if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	defer response.Body.Close()
 
 	var data interface{}
 	err = json.NewDecoder(response.Body).Decode(&data)
 	if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
-
 
 func clock(flag chan bool) {
 	var ms int = 0
@@ -207,4 +209,5 @@ func clock(flag chan bool) {
 				fmt.Println(seconds, visits)
 			}
 		}
-	}}
+	}
+}
