@@ -38,11 +38,15 @@ export default function Home() {
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
+    let theQuery = query.replace(/\s/g, "_"); /* Mengganti Spasi Dengan Underscore */
+    let theObjective = objective.replace(/\s/g, "_"); /* Mengganti Spasi Dengan Underscore */
+
+    console.log("Query : ", theQuery);
+    console.log("Objective : ", theObjective);
+
     try {
-      console.log("SUBMITTED")
       const mode = algorithm ? 'bfsfunc' : 'idsfunc';
-      const response = await axios.get(`http://localhost:8080/api/${mode}?query=${"query"}&query2=${objective}`);
-      console.log("BERES")
+      const response = await axios.get(`http://localhost:8080/api/${mode}?query=${theQuery}&query2=${theObjective}`);
       console.log(response.data);
       // Handle response data here, set it to state or perform other actions
     } catch (error) {
