@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"tubes2/crawl"
 )
 
 func hasJank(text string) bool {
@@ -47,7 +48,7 @@ func IDS(actor Node, target string, maxdepth int, firstonly bool) []Node {
 				child.depth = actor.depth + 1
 				child.trail = append(actor.trail, actor.name)
 				if child.depth < maxdepth {
-					child.link = scrape(actor.link[i]) //fill with link in child
+					child.link = crawl.Scrape(actor.link[i]) //fill with link in child
 					//fmt.Printf("|| Scrapped!")
 				}
 				// Itterate over result of IDS, if empty then stop
