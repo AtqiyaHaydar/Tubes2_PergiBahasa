@@ -20,9 +20,12 @@ func IDSWrapper(start string, end string) ([]Node, int) {
 	var bruh Node = *makeNode(start, 0, []string{})
 	var result []Node
 	var i int = 1
+	fmt.Println("SEEKING", start, end)
 	for len(result) == 0 && i < 6 {
+		fmt.Println("Current depth : ", i)
 		visits = 0
-		result = IDS(bruh, end, 2, true)
+		result = IDS(bruh, end, i+1, true)
+		i++
 	}
 	return result, visits
 }

@@ -11,7 +11,13 @@ func main() {
 	fmt.Print("Type a number: ")
 	fmt.Scan(&i)
 	if i == 0 {
-		idsTest()
+		flag := make(chan bool)
+		go clock(flag)
+		flag <- false
+		resulttest,_ := IDSWrapper(start, tujuan)
+		flag <- true
+		fmt.Println(resulttest[0].trail)
+		// idsTest()
 	} else {
 		bfsTest()
 	}

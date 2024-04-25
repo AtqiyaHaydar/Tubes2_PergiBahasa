@@ -38,10 +38,11 @@ export default function Home() {
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
+    console.log("Wuery", query, "Objektif", objective)
     try {
       console.log("SUBMITTED")
       const mode = algorithm ? 'bfsfunc' : 'idsfunc';
-      const response = await axios.get(`http://localhost:8080/api/${mode}?query=${"query"}&query2=${objective}`);
+      const response = await axios.get(`http://localhost:8080/api/${mode}?query=${query}&query2=${objective}`);
       console.log("BERES")
       console.log(response.data);
       // Handle response data here, set it to state or perform other actions
