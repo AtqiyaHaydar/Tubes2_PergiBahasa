@@ -30,9 +30,11 @@ export default function Home() {
   const [query, setQuery] = useState<string>(""); /* Judul Artikel Awal */
   const [objective, setObjective] = useState<string>(""); /* Judul Artikel Tujuan */
   const [algorithm, setAlgorithm] = useState<boolean>(false); /* Default IDS */
-  const [searchTerm, setSearchTerm] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API */
+  const [searchTerm, setSearchTerm] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
+  const [searchTermObjective, setSearchTermObjective] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
   const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
-  const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API */
+  const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
+  const [isSelectOpenObjective, setIsSelectOpenObjective] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
@@ -70,19 +72,36 @@ export default function Home() {
         return;
       }
 
-      console.log("Masuk Try Block Dengan Value", value)
-
       const response = await axios.get(
         `http://localhost:8080/api/wikipedia?query=${encodeURIComponent(value)}`
       );
 
   
       setSearchTerm(response.data.query.search);
-      console.log(response.data.query.search);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
+  /* Fungsi Menampilkan Hasil Pencarian Dari Objective Dengan Wikipedia API */
+  const handleObjective = async () => {
+    const value = objective.trim();
+
+    try {
+      if (value === "") {
+        setSearchTermObjective([]);
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:8080/api/wikipedia?query=${encodeURIComponent(value)}`
+      );
+
+      setSearchTermObjective(response.data.query.search);
+    } catch (error) {
+      console.error('Error fetching data:', error); 
+    }
+  }
 
   /* Use Effect : Debounce Time Untuk Memperbarui Query Sekarang */
   useEffect(() => {
@@ -96,6 +115,19 @@ export default function Home() {
       };
     }
   }, [query]);
+
+  /* Use Effect : Debounce Time Untuk Memperbarui Objective Sekarang */
+  useEffect(() => {
+    if (isSelectOpenObjective) {
+      const timerId = setTimeout(() => {
+        handleObjective();
+      }, 500); // Debouncing Time
+  
+      return () => {
+        clearTimeout(timerId);
+      };
+    }
+  }, [objective])
    
   return (
     <main className="w-full h-full my-24 flex flex-col items-center justify-center gap-y-12">
@@ -122,7 +154,7 @@ export default function Home() {
               }
             }
           />
-          {/* Menampilkan Hasil Pencarian Dari Wikipedia API */}
+          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Awal */}
           {searchTerm.length > 0 && (
             <div className="absolute top-[325px]">
               <ScrollArea className="h-[175px] bg-white rounded-md border z-[20] w-[300px]">
@@ -130,21 +162,13 @@ export default function Home() {
                   {searchTerm.map((item, index) => (
                     <li 
                       key={index} 
-                      className="text-black h-[100px] px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
+                      className="text-black h-[45px] px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
                       onClick={() => {
                         setQuery(item.title)
                         setSearchTerm([])
                         setIsSelectOpen(false)
                       }}
                     >
-                      {item.thumbnail && 
-                        <Image 
-                          src={item.thumbnail.source} 
-                          alt={item.title} 
-                          width={50}
-                          height={50}
-                        />
-                      }
                       <p>{item.title}</p>
                     </li>
                   ))}
@@ -163,8 +187,34 @@ export default function Home() {
             className="w-[300px] z-[20]"
             placeholder="Judul Artikel Tujuan"
             value={objective}
-            onChange={(e) => setObjective(e.target.value)}
+            onChange={(e) => {
+              setObjective(e.target.value)
+              handleObjective()
+              setIsSelectOpenObjective(true)
+            }}
           />
+          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Awal */}
+          {searchTermObjective.length > 0 && (
+            <div className="absolute top-[325px]">
+              <ScrollArea className="h-[175px] bg-white rounded-md border z-[20] w-[300px]">
+                <ul className="py-2 gap-y-4">
+                  {searchTermObjective.map((item, index) => (
+                    <li 
+                      key={index} 
+                      className="text-black h-[45px] px-4 hover:bg-black/10 cursor-pointer transition-all py-1.5 flex items-center justify-center gap-x-2"
+                      onClick={() => {
+                        setObjective(item.title)
+                        setSearchTermObjective([])
+                        setIsSelectOpenObjective(false)
+                      }}
+                    >
+                      <p>{item.title}</p>
+                    </li>
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          )}
         </div>
       </div>
 
