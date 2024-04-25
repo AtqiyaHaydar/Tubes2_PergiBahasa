@@ -47,12 +47,12 @@ export default function Home() {
     try {
       /* Mode IDS */
       if (algorithm == false) {
-        
+        response = await axios.get(``)
       } 
-      
+
       /* Mode BFS */
       else {
-
+        response = await axios.get(``)
       }
 
       response = await axios.get(`http://localhost:8080/scrape?query=${query}`)
@@ -204,7 +204,7 @@ export default function Home() {
               setIsSelectOpenObjective(true)
             }}
           />
-          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Awal */}
+          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Tujuan */}
           {searchTermObjective.length > 0 && (
             <div className="absolute top-[325px]">
               <ScrollArea className="h-[175px] bg-white rounded-md border z-[20] w-[300px]">
