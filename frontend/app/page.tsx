@@ -32,9 +32,9 @@ export default function Home() {
   const [algorithm, setAlgorithm] = useState<boolean>(false); /* Default IDS */
   const [searchTerm, setSearchTerm] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
   const [searchTermObjective, setSearchTermObjective] = useState<SearchResultI[]>([]); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
-  const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
   const [isSelectOpenObjective, setIsSelectOpenObjective] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
+  const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
@@ -43,8 +43,19 @@ export default function Home() {
       description: "Artikel Awal: " + query + " | Artikel Tujuan: " + objective + " | Mode: " + (algorithm ? "BFS" : "IDS"),
     })
 
+    let response;
     try {
-      const response = await axios.get(`http://localhost:8080/scrape?query=${query}`)
+      /* Mode IDS */
+      if (algorithm == false) {
+        response = await axios.get(``)
+      } 
+
+      /* Mode BFS */
+      else {
+        response = await axios.get(``)
+      }
+
+      response = await axios.get(`http://localhost:8080/scrape?query=${query}`)
       setResult(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -193,7 +204,7 @@ export default function Home() {
               setIsSelectOpenObjective(true)
             }}
           />
-          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Awal */}
+          {/* Menampilkan Hasil Pencarian Dari Wikipedia API pada Input Artikel Tujuan */}
           {searchTermObjective.length > 0 && (
             <div className="absolute top-[325px]">
               <ScrollArea className="h-[175px] bg-white rounded-md border z-[20] w-[300px]">
