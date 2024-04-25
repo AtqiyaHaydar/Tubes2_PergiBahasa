@@ -5,20 +5,37 @@ import (
 	"time"
 )
 
+//muneki's main
+// func main() {
+// 	var bruh Node = *makeNode("Institut_Teknologi_Bandung", scrape("Institut_Teknologi_Bandung"))
+// 	flag := make(chan bool)
+// 	go clock(flag)
+// 	flag <- false
+// 	var result []Node = IDS(bruh, "Laos", 4)
+// 	flag <- true
+// 	//MUTEX BABEY
+// 	//var thing []string = scrape("File:Diploma_icon.png")
+// 	fmt.Println("Winners:")
+// 	for _, item := range result {
+// 		fmt.Println(item)
+// 	}
+// 	//fmt.Println(bruh.link[0])
+// }
+
+// Sean's main
 func main() {
-	var bruh Node = *makeNode("Institut_Teknologi_Bandung", scrape("Institut_Teknologi_Bandung"))
 	flag := make(chan bool)
 	go clock(flag)
 	flag <- false
-	var result []Node = IDS(bruh, "Laos", 4)
+	result, someInt := CPBFS("Slot_machine", "Ridotto")
 	flag <- true
 	//MUTEX BABEY
 	//var thing []string = scrape("File:Diploma_icon.png")
 	fmt.Println("Winners:")
-	for _, item := range result {
-		fmt.Println(item)
+	for i := 0; i < len(result); i++ {
+		printNode(result[i])
 	}
-	//fmt.Println(bruh.link[0])
+	fmt.Println("Ammount of links checked : ", someInt)
 }
 
 func clock(flag chan bool) {
@@ -37,7 +54,6 @@ func clock(flag chan bool) {
 			stop = stop
 			if ms/100 > seconds {
 				seconds = ms / 100
-				fmt.Println(seconds)
 			}
 		}
 
