@@ -44,7 +44,7 @@ func IDS(actor Node, target string, maxdepth int, firstonly bool) []Node {
 			}
 
 			if !hasJank(actor.link[i]) {
-				var child Node = *makeNode(actor.link[i], actor.depth+1, append(actor.trail, actor.name))
+				var child Node = *newNode(actor.link[i], actor.depth+1, append(actor.trail, actor.name))
 				if child.depth < maxdepth {
 					child.link = crawl.Scrape(actor.link[i]) //fill with link in child
 					//fmt.Printf("|| Scrapped!")

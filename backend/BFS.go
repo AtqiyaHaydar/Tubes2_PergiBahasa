@@ -70,12 +70,6 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 	return result, ammtOfArticles
 }
 
-func printNode(_node Node) {
-	for i := 0; i < len(_node.trail); i++ {
-		fmt.Println(_node.trail[i])
-	}
-}
-
 func printSlice(slc []Node) {
 	fmt.Printf("[")
 	for i := 0; i < len(slc); i++ {
