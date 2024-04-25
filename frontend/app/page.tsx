@@ -46,17 +46,21 @@ export default function Home() {
     let response;
     try {
       /* Mode IDS */
+      console.log("Mode", algorithm)
       if (algorithm == false) {
-        response = await axios.get(``)
+        response = await axios.get(`http://localhost:8080/api/idsfunc?query=${query}&query2=${objective}`)
       } 
 
       /* Mode BFS */
-      else {
-        response = await axios.get(``)
+      else if (algorithm == true) {
+        console.log("MODE BFS..!")
+        response = await axios.get(`http://localhost:8080/api/bfsfunc?query=${query}&query2=${objective}`)
+        console.log("BERES BFS")
       }
 
       response = await axios.get(`http://localhost:8080/scrape?query=${query}`)
-      setResult(response.data)
+      // setResult(response.data)
+      console.log(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
