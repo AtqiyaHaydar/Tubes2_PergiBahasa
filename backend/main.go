@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 	"log"
 	"net/http"
 	"net/url"
@@ -33,6 +34,8 @@ func main() {
 
 /* Fungsi IDS */
 func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("FUNGSI DIJALANKAN")
+
 	if r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -52,11 +55,15 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Query parameter is required", http.StatusBadRequest)
 		return
 	}
-
+	flag := make(chan bool)
+	go clock(flag)
+	flag <- false
 	/* Menerima Return Dari IDS */
 	resultArticle, visitArticle := IDSWrapper(awal, akhir) 
+	resultList := resultArticle[0].trail
+	flag <- true
 
-	responseResultJSON, err := json.Marshal(resultArticle)
+	responseResultJSON, err := json.Marshal(resultList)
 	if err != nil {
 		http.Error(w, "Error encoding result JSON", http.StatusInternalServerError)
 		return
@@ -179,3 +186,25 @@ func handleWikipediaRequest(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
+
+
+func clock(flag chan bool) {
+	var ms int = 0
+	var seconds int = 0
+	stop := <-flag
+	for !stop {
+		if !stop {
+			time.Sleep(10 * time.Millisecond)
+			ms = ms + 1
+		}
+		select {
+		case newstop := <-flag:
+			stop = newstop
+		default:
+			stop = stop
+			if ms/100 > seconds {
+				seconds = ms / 100
+				fmt.Println(seconds, visits)
+			}
+		}
+	}}

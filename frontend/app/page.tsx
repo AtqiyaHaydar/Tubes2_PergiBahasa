@@ -38,32 +38,17 @@ export default function Home() {
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
-    toast({
-      title: "Searching...",
-      description: "Artikel Awal: " + query + " | Artikel Tujuan: " + objective + " | Mode: " + (algorithm ? "BFS" : "IDS"),
-    })
-
-    let response: any;
     try {
-      /* Mode IDS */
-      if (algorithm == false) {
-        console.log("MODE IDS..!")
-        response = await axios.get(`http://localhost:8080/api/idsfunc?query=${query}&query2=${objective}`)
-      }
-
-      /* Mode BFS */
-      else if (algorithm == true) {
-        console.log("MODE BFS..!")
-        response = await axios.get(`http://localhost:8080/api/bfsfunc?query=${query}&query2=${objective}`)
-      }
-
-      console.log(response.data)
-      console.log("BERES PENCARIAN..!")
-      // setResult(response.data)
+      console.log("SUBMITTED")
+      const mode = algorithm ? 'bfsfunc' : 'idsfunc';
+      const response = await axios.get(`http://localhost:8080/api/${mode}?query=${"query"}&query2=${objective}`);
+      console.log("BERES")
+      console.log(response.data);
+      // Handle response data here, set it to state or perform other actions
     } catch (error) {
-      console.error('Error fetching data:', error)
+      console.error('Error fetching data:', error);
     }
-  }
+  };
 
   /* Use Effect : Notifikasi Toast Bahwa Mode Sudah Diganti */
   useEffect(() => {
