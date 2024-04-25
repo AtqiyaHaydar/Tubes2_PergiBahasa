@@ -16,6 +16,13 @@ func hasJank(text string) bool {
 
 var visits int = 0
 
+func IDSWrapper(start string, end string) ([]Node, int) {
+	visits = 0
+	var bruh Node = *makeNode("Bandung_Institute_of_Technology", 0, crawl.Scrape("Bandung_Institute_of_Technology"))
+	var result []Node = IDS(bruh, "Laos", 2, true)
+	return result, visits
+}
+
 func IDS(actor Node, target string, maxdepth int, firstonly bool) []Node {
 	visits++
 	//define
