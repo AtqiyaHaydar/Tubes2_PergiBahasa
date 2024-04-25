@@ -6,11 +6,12 @@ import (
 )
 
 func main() {
-	var bruh Node = *makeNode("Institut_Teknologi_Bandung", scrape("Institut_Teknologi_Bandung"))
+	var bruh Node = *makeNode("Basketball", scrape("Basketball"))
+	fmt.Println("Starting")
 	flag := make(chan bool)
 	go clock(flag)
 	flag <- false
-	var result []Node = IDS(bruh, "Laos", 4)
+	var result []Node = IDS(bruh, "Joko_Widodo", 2, true)
 	flag <- true
 	//MUTEX BABEY
 	//var thing []string = scrape("File:Diploma_icon.png")
@@ -37,7 +38,7 @@ func clock(flag chan bool) {
 			stop = stop
 			if ms/100 > seconds {
 				seconds = ms / 100
-				fmt.Println(seconds)
+				fmt.Println(seconds, visits)
 			}
 		}
 
