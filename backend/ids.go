@@ -20,7 +20,7 @@ func IDSWrapper(start string, end string) ([]Node, int) {
 	var bruh Node = *makeNode(start, 0, []string{})
 	var result []Node
 	var i int = 1
-	for (len(result) == 0 && i < 6) {
+	for len(result) == 0 && i < 6 {
 		visits = 0
 		result = IDS(bruh, end, 2, true)
 	}
@@ -34,6 +34,7 @@ func IDS(actor Node, target string, maxdepth int, firstonly bool) []Node {
 	//check if last or found
 	if actor.name == target {
 		if actor.name == target {
+			actor.trail = append(actor.trail, actor.name)
 			retval = append(retval, actor)
 			fmt.Println("Found", target, "in", actor.depth, "by", actor.trail)
 			if firstonly == true {
