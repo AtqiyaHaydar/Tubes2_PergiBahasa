@@ -43,24 +43,23 @@ export default function Home() {
       description: "Artikel Awal: " + query + " | Artikel Tujuan: " + objective + " | Mode: " + (algorithm ? "BFS" : "IDS"),
     })
 
-    let response;
+    let response: any;
     try {
       /* Mode IDS */
-      console.log("Mode", algorithm)
       if (algorithm == false) {
+        console.log("MODE IDS..!")
         response = await axios.get(`http://localhost:8080/api/idsfunc?query=${query}&query2=${objective}`)
-      } 
+      }
 
       /* Mode BFS */
       else if (algorithm == true) {
         console.log("MODE BFS..!")
         response = await axios.get(`http://localhost:8080/api/bfsfunc?query=${query}&query2=${objective}`)
-        console.log("BERES BFS")
       }
 
-      response = await axios.get(`http://localhost:8080/scrape?query=${query}`)
-      // setResult(response.data)
       console.log(response.data)
+      console.log("BERES PENCARIAN..!")
+      // setResult(response.data)
     } catch (error) {
       console.error('Error fetching data:', error)
     }
