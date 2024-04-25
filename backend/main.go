@@ -58,44 +58,14 @@ func handleScrape(w http.ResponseWriter, r *http.Request) {
 	w.Write(responseJSON)
 }
 
-// /* Fungsi Menampilkan Hasil Pencarian Dari Wikipedia API */
-// func handleWikipediaRequest(w http.ResponseWriter, r *http.Request) {
-// 	query := r.URL.Query().Get("query")
-// 	if query == "" {
-// 			http.Error(w, "Query parameter is required", http.StatusBadRequest)
-// 			return
-// 	}
-
-// 	wikipediaURL := "https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=" + url.QueryEscape(query)
-// 	response, err := http.Get(wikipediaURL)
-// 	if err != nil {
-// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-// 			return
-// 	}
-// 	defer response.Body.Close()
-
-// 	var data interface{}
-// 	err = json.NewDecoder(response.Body).Decode(&data)
-// 	if err != nil {
-// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-// 			return
-// 	}
-
-// 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(data)
-// }
-
 /* Fungsi Menampilkan Hasil Pencarian Dari Wikipedia API */
 func handleWikipediaRequest(w http.ResponseWriter, r *http.Request) {
-
 	query := r.URL.Query().Get("query")
 	if query == "" {
 			http.Error(w, "Query parameter is required", http.StatusBadRequest)
 			return
 	}
 
-	// Membuat permintaan untuk mendapatkan hasil pencarian dari Wikipedia API
 	wikipediaURL := "https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=" + url.QueryEscape(query)
 	response, err := http.Get(wikipediaURL)
 	if err != nil {
@@ -104,49 +74,14 @@ func handleWikipediaRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	defer response.Body.Close()
 
-	var searchData interface{}
-	err = json.NewDecoder(response.Body).Decode(&searchData)
+	var data interface{}
+	err = json.NewDecoder(response.Body).Decode(&data)
 	if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 	}
 
-	// Menemukan halaman pertama dari hasil pencarian untuk mendapatkan informasi tambahan, termasuk URL gambar
-	searchResult := searchData.(map[string]interface{})["query"].(map[string]interface{})["search"].([]interface{})
-	if len(searchResult) == 0 {
-			// Tidak ada hasil pencarian yang ditemukan
-			http.Error(w, "No search results found", http.StatusNotFound)
-			return
-	}
-
-	// Mengambil judul artikel Wikipedia untuk permintaan lanjutan
-	pageTitle := searchResult[0].(map[string]interface{})["title"].(string)
-
-	// Membuat permintaan untuk mendapatkan informasi tambahan tentang halaman artikel, termasuk URL gambar
-	pageURL := fmt.Sprintf("https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=%s&pithumbsize=300", url.QueryEscape(pageTitle))
-	pageResponse, err := http.Get(pageURL)
-	if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-	}
-	defer pageResponse.Body.Close()
-
-	var pageData interface{}
-	err = json.NewDecoder(pageResponse.Body).Decode(&pageData)
-	if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-	}
-
-	// Menggabungkan data hasil pencarian dengan informasi tambahan (termasuk URL gambar)
-	pageDataMap := pageData.(map[string]interface{})["query"].(map[string]interface{})["pages"].(map[string]interface{})
-	for _, v := range pageDataMap {
-			searchData.(map[string]interface{})["query"].(map[string]interface{})["search"].([]interface{})[0].(map[string]interface{})["thumbnail"] = v.(map[string]interface{})["thumbnail"]
-			break // Hanya memproses halaman pertama
-	}
-
-	// Mengatur header dan mengembalikan hasil JSON yang disempurnakan
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(searchData)
+	json.NewEncoder(w).Encode(data)
 }

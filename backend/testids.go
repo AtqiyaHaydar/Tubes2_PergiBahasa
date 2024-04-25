@@ -3,16 +3,30 @@ package main
 import (
 	"fmt"
 	"time"
-	"tubes2/crawl"
 )
 
 func main() {
-	var bruh Node = *makeNode("Bandung_Institute_of_Technology", 0, crawl.Scrape("Bandung_Institute_of_Technology"))
+	var i int
+
+	fmt.Print("Type a number: ")
+	fmt.Scan(&i)
+	if i == 0 {
+		idsTest()
+	} else {
+		bfsTest()
+	}
+}
+
+var start string = "Basketball"
+var tujuan string = "Joko_Widodo"
+
+func idsTest() {
+	var bruh Node = *makeNode(start, 0, []string{})
 	fmt.Println("Starting")
 	flag := make(chan bool)
 	go clock(flag)
 	flag <- false
-	var result []Node = IDS(bruh, "Laos", 2, true)
+	var result []Node = IDS(bruh, tujuan, 4, true)
 	flag <- true
 	//MUTEX BABEY
 	//var thing []string = scrape("File:Diploma_icon.png")
@@ -21,6 +35,23 @@ func main() {
 		printNode(result[i])
 	}
 	//fmt.Println(bruh.link[0])
+}
+
+// Sean's main
+func bfsTest() {
+	counter = &visits
+	flag := make(chan bool)
+	go clock(flag)
+	flag <- false
+	result, someInt := BFS(start, tujuan)
+	flag <- true
+	//MUTEX BABEY
+	//var thing []string = scrape("File:Diploma_icon.png")
+	fmt.Println("Winners:")
+	for i := 0; i < len(result); i++ {
+		printNode(result[i])
+	}
+	fmt.Println("Ammount of links checked : ", someInt)
 }
 
 func printNode(_node Node) {
