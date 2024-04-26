@@ -8,9 +8,12 @@ import (
 	"net/url"
 	"time"
 	"tubes2/crawl"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
+
+var maincounter *int
 
 func main() {
 	r := mux.NewRouter()
@@ -35,38 +38,45 @@ func main() {
 /* Fungsi IDS */
 func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "OPTIONS" {
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-			w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			w.WriteHeader(http.StatusOK)
-			return
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.WriteHeader(http.StatusOK)
+		return
 	}
 
 	// Validasi input
 	query := r.URL.Query().Get("query")
 	query2 := r.URL.Query().Get("query2")
 	if query == "" || query2 == "" {
-			http.Error(w, "Both query parameters are required", http.StatusBadRequest)
-			return
+		http.Error(w, "Both query parameters are required", http.StatusBadRequest)
+		return
 	}
+
+	flag := make(chan bool)
+	maincounter = &IDSvisits
+	go clock(flag)
+	flag <- false
 
 	// Panggil IDSWrapper dengan input yang valid
 	resultArticle, visitArticle := IDSWrapper(query, query2)
 
+	flag <- true
+
 	// Buat respons JSON dengan format yang diharapkan
 	response := struct {
-			Keywords []string `json:"keywords"`
-			Number   int      `json:"number"`
+		Keywords []string `json:"keywords"`
+		Number   int      `json:"number"`
 	}{
-			Keywords: resultArticle[0].trail,
-			Number:   visitArticle,
+		Keywords: resultArticle[0].trail,
+		Number:   visitArticle,
 	}
 
 	// Encode respons JSON
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
-			http.Error(w, "Error encoding response JSON", http.StatusInternalServerError)
-			return
+		http.Error(w, "Error encoding response JSON", http.StatusInternalServerError)
+		return
 	}
 
 	// Set header dan kirim respons
@@ -93,22 +103,27 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	query2 := r.URL.Query().Get("query2")
 	if query == "" || query2 == "" {
-			// http.Error(w, "Both query parameters are required", http.StatusBadRequest)
-			// return
-			fmt.Println("ERROR QUERY PARAMETER")
+		// http.Error(w, "Both query parameters are required", http.StatusBadRequest)
+		// return
+		fmt.Println("ERROR QUERY PARAMETER")
 	}
 
 	fmt.Println("CHECKPOINT 3!")
 
 	// Panggil fungsi BFS dengan input yang valid
+	flag := make(chan bool)
+	maincounter = &BFSVisits
+	go clock(flag)
+	flag <- false
 	resultArticle, visitArticle := BFS(query, query2)
+	flag <- true
 
 	fmt.Println("CHECKPOINT 4!")
 
 	// Buat respons JSON dengan format yang diharapkan
 	response := struct {
 		Result []string `json:"result"`
-		Visit  int       `json:"visit"`
+		Visit  int      `json:"visit"`
 	}{
 		Result: resultArticle[0].trail,
 		Visit:  visitArticle,
@@ -208,7 +223,7 @@ func clock(flag chan bool) {
 			stop = stop
 			if ms/100 > seconds {
 				seconds = ms / 100
-				fmt.Println(seconds, visits)
+				fmt.Println(seconds, *maincounter)
 			}
 		}
 	}

@@ -14,7 +14,7 @@ func hasJank(text string) bool {
 	}
 }
 
-var visits int = 0
+var IDSvisits int = 0
 
 func IDSWrapper(start string, end string) ([]Node, int) {
 	var bruh Node = *makeNode(start, 0, []string{})
@@ -23,15 +23,15 @@ func IDSWrapper(start string, end string) ([]Node, int) {
 	fmt.Println("SEEKING", start, end)
 	for len(result) == 0 && i < 6 {
 		fmt.Println("Current depth : ", i)
-		visits = 0
+		IDSvisits = 0
 		result = IDS(bruh, end, i+1, true)
 		i++
 	}
-	return result, visits
+	return result, IDSvisits
 }
 
 func IDS(actor Node, target string, maxdepth int, firstonly bool) []Node {
-	visits++
+	IDSvisits++
 	//define
 	var retval []Node //rerturn value
 	//check if last or found

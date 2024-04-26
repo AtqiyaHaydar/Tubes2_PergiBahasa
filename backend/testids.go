@@ -14,11 +14,12 @@
 // 		flag := make(chan bool)
 // 		go clock(flag)
 // 		flag <- false
-// 		resulttest,_ := IDSWrapper(start, tujuan)
+// 		resulttest, _ := IDSWrapper(start, tujuan)
 // 		flag <- true
 // 		fmt.Println(resulttest[0].trail)
 // 		// idsTest()
 // 	} else {
+// 		counter = &visits
 // 		bfsTest()
 // 	}
 // }
@@ -45,7 +46,6 @@
 
 // // Sean's main
 // func bfsTest() {
-// 	counter = &visits
 // 	flag := make(chan bool)
 // 	go clock(flag)
 // 	flag <- false

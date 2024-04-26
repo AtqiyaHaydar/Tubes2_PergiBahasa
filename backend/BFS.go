@@ -7,7 +7,13 @@ import (
 	"github.com/gammazero/deque"
 )
 
+var BFSVisits int = 0
+
 func BFS(awal string, tujuan string) ([]Node, int) {
+	//debug
+	fmt.Println(awal)
+	fmt.Println(tujuan)
+
 	_depth := 0
 	ammtOfArticles := 0
 	var _trail []string
@@ -56,6 +62,8 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 			}
 		}
 		ammtOfArticles += 1
+		BFSVisits = ammtOfArticles
+
 		if strings.EqualFold(livingNode.name, tujuan) { //livingNode.name == tujuan
 			flag = true
 			result = append(result, livingNode)
