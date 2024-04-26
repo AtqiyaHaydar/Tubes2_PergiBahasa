@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gammazero/deque"
 )
@@ -13,7 +12,6 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 	//debug
 	fmt.Println(awal)
 	fmt.Println(tujuan)
-
 	_depth := 0
 	ammtOfArticles := 0
 	var _trail []string
@@ -31,9 +29,9 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 	for notFound {
 		livingNode := buffer.Front()
 		if flag {
-			if livingNode.depth > result[0].depth {
-				notFound = false
-			}
+			//if livingNode.depth > result[0].depth {
+			notFound = false
+			//}
 		}
 		buffer.PopFront()
 		if livingNode.depth == 0 {
@@ -63,9 +61,9 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 		}
 		ammtOfArticles += 1
 		BFSVisits = ammtOfArticles
-
-		if strings.EqualFold(livingNode.name, tujuan) { //livingNode.name == tujuan
+		if livingNode.name == tujuan { //livingNode.name == tujuan
 			flag = true
+			fmt.Println("Found", tujuan, "in", livingNode.depth, "by", livingNode.trail)
 			result = append(result, livingNode)
 		} else {
 			visited[livingNode.name] = true
