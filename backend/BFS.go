@@ -7,8 +7,6 @@ import (
 	"github.com/gammazero/deque"
 )
 
-var counter *int
-
 func BFS(awal string, tujuan string) ([]Node, int) {
 	_depth := 0
 	ammtOfArticles := 0
@@ -58,7 +56,6 @@ func BFS(awal string, tujuan string) ([]Node, int) {
 			}
 		}
 		ammtOfArticles += 1
-		*counter++
 		if strings.EqualFold(livingNode.name, tujuan) { //livingNode.name == tujuan
 			flag = true
 			result = append(result, livingNode)
