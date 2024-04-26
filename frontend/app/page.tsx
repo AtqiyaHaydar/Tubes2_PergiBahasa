@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import ArrayGraph from "./ArrayGraph";
 
 interface SearchResultI {
   ns: number;
@@ -35,6 +36,7 @@ export default function Home() {
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
   const [isSelectOpenObjective, setIsSelectOpenObjective] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
   const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
+  const [numArticleVisited, setNumArticleVisited] = useState<number>(0); /* Jumlah Artikel Dilalui */ 
   const [time, setTime] = useState<number>(0); /* Waktu Pencarian */
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
@@ -58,6 +60,8 @@ export default function Home() {
       let timeEnd = new Date().getTime(); /* Waktu Selesai Pencarian */
       let timeDiff = timeEnd - timeStart; /* Waktu Total Pencarian */
       setTime(timeDiff); /* Set Waktu Pencarian */
+      setResult(response.data.keywords); /* Set Hasil Pencarian */
+      setNumArticleVisited(response.data.number); /* Set Jumlah Artikel Dilalui */
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -262,19 +266,27 @@ export default function Home() {
       <Button className="z-[20] w-[125px]" onClick={handleSearch}>Search</Button>
 
       {/* Mapping Hasil Pencarian */}
-      <div className="m-12 px-4 py-8 border-2 border-white/75 min-h-[50px] w-[90%] rounded-lg overflow-hidden">
-        {result && (
-          <div className="space-y-8">
-            <h3 className="text-white text-2xl font-semibold text-center">Results</h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-9 gap-y-1 text-center">
-              {result.map((link: string, index: number) => (
-                <li key={index}>
-                  <p className="text-white">{link}</p>
-                </li>
-              ))}
-            </ul>
+      <div className="m-12 px-16 py-8 border-2 border-white/75 min-h-[50px] w-[90%] rounded-lg overflow-hidden">
+        <div className="space-y-8 w-full">
+          <div className="flex flex-col md:flex-row text-center space-y-2 w-full justify-between text-white">
+            <h3 className="text-2xl font-semibold text-center">Results</h3>
+            <p>Search Duration : {time} ms</p>
           </div>
-        )}
+          <div className="flex justify-between">
+            <div className="mt-8 text-white text-xl text-center md:text-left space-y-2">
+              <p>Jumlah Artikel Diperiksa : {numArticleVisited} </p>
+              <p>Jumlah Artikel Dilalui : {result.length - 2 < 0 ? 0 : result.length - 2} </p>
+            </div>
+            <div className="flex items-center justify-center">
+              {/* Menganimasikan Menggunakan Graph */}
+              {result && (
+                <div className="z-20 text-white">
+                  <ArrayGraph data={result} width={250} height={250} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
