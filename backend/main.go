@@ -88,8 +88,6 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 
 /* Fungsi BFS */
 func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("CHECKPOINT 1!")
-
 	if r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -97,8 +95,6 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-
-	fmt.Println("CHECKPOINT 2!")
 
 	query := r.URL.Query().Get("query")
 	query2 := r.URL.Query().Get("query2")
@@ -108,8 +104,6 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("ERROR QUERY PARAMETER")
 	}
 
-	fmt.Println("CHECKPOINT 3!")
-
 	// Panggil fungsi BFS dengan input yang valid
 	flag := make(chan bool)
 	maincounter = &BFSVisits
@@ -118,18 +112,14 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 	resultArticle, visitArticle := BFS(query, query2)
 	flag <- true
 
-	fmt.Println("CHECKPOINT 4!")
-
 	// Buat respons JSON dengan format yang diharapkan
 	response := struct {
-		Result []string `json:"result"`
-		Visit  int      `json:"visit"`
+		Result []string `json:"keywords"`
+		Visit  int      `json:"number"`
 	}{
 		Result: resultArticle[0].trail,
 		Visit:  visitArticle,
 	}
-
-	fmt.Println("CHECKPOINT 5!")
 
 	// Encode respons JSON
 	responseJSON, err := json.Marshal(response)
@@ -139,15 +129,11 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("CHECKPOINT 6!")
-
 	// Set header dan kirim respons
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJSON)
-
-	fmt.Println("CHECKPOINT 7!")
 }
 
 /* Fungsi Scrape */

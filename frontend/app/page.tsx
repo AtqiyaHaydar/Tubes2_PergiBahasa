@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import ArrayGraph from "./ArrayGraph";
+import ArrayGraph from "../components/ArrayGraph";
 
 interface SearchResultI {
   ns: number;
