@@ -35,20 +35,30 @@ export default function Home() {
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Awal) */
   const [isSelectOpenObjective, setIsSelectOpenObjective] = useState<boolean>(true); /* Menampilkan Hasil Yang Didapat Dari Wikipedia API (Artikel Tujuan) */
   const [result, setResult] = useState<string[]>([]); /* Hasil Pencarian */
+  const [time, setTime] = useState<number>(0); /* Waktu Pencarian */
 
   /* Fungsi Untuk Mengirim Request dan Menerima Response Dari Backend */
   const handleSearch = async () => {
+    toast({
+      title: "Searching...",
+      description: "Artikel Awal: " + query + " | Artikel Tujuan: " + objective
+    })
+
+
     let theQuery = query.replace(/\s/g, "_"); /* Mengganti Spasi Dengan Underscore */
     let theObjective = objective.replace(/\s/g, "_"); /* Mengganti Spasi Dengan Underscore */
 
-    console.log("Query : ", theQuery);
-    console.log("Objective : ", theObjective);
-
     try {
+      let timeStart = new Date().getTime(); /* Waktu Mulai Pencarian */
+
       const mode = algorithm ? 'bfsfunc' : 'idsfunc';
       const response = await axios.get(`http://localhost:8080/api/${mode}?query=${theQuery}&query2=${theObjective}`);
       console.log(response.data);
-      // Handle response data here, set it to state or perform other actions
+
+      let timeEnd = new Date().getTime(); /* Waktu Selesai Pencarian */
+      let timeDiff = timeEnd - timeStart; /* Waktu Total Pencarian */
+      setTime(timeDiff); /* Set Waktu Pencarian */
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -226,7 +236,7 @@ export default function Home() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <p className="hover:bg-white/10 px-3 py-2 rounded-sm cursor-pointer transition-all">IDF</p>
+              <p className="hover:bg-white/10 px-3 py-2 rounded-sm cursor-pointer transition-all">IDS</p>
             </TooltipTrigger>
             <TooltipContent className="bg-white/10 text-white">
               <p>Iterative Deepening First Search</p>

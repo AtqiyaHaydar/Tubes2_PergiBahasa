@@ -8,7 +8,6 @@ import (
 	"net/url"
 	"time"
 	"tubes2/crawl"
-
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -35,53 +34,43 @@ func main() {
 
 /* Fungsi IDS */
 func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("FUNGSI DIJALANKAN")
-
 	if r.Method == "OPTIONS" {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.WriteHeader(http.StatusOK)
-		return
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.WriteHeader(http.StatusOK)
+			return
 	}
 
-	awal := r.URL.Query().Get("query")
-	fmt.Println("AWALTOT ", awal)
-	if awal == "" {
-		http.Error(w, "Query parameter is required", http.StatusBadRequest)
-		return
+	// Validasi input
+	query := r.URL.Query().Get("query")
+	query2 := r.URL.Query().Get("query2")
+	if query == "" || query2 == "" {
+			http.Error(w, "Both query parameters are required", http.StatusBadRequest)
+			return
 	}
 
-	akhir := r.URL.Query().Get("query2")
-	fmt.Println("AHKIRTOT ", akhir)
-	if akhir == "" {
-		http.Error(w, "Query parameter is required", http.StatusBadRequest)
-		return
-	}
-	flag := make(chan bool)
-	go clock(flag)
-	flag <- false
-	/* Menerima Return Dari IDS */
-	resultArticle, visitArticle := IDSWrapper(awal, akhir)
-	resultList := resultArticle[0].trail
-	flag <- true
+	// Panggil IDSWrapper dengan input yang valid
+	resultArticle, visitArticle := IDSWrapper(query, query2)
 
-	responseResultJSON, err := json.Marshal(resultList)
+	// Buat respons JSON dengan format yang diharapkan
+	response := struct {
+			Keywords []string `json:"keywords"`
+			Number   int      `json:"number"`
+	}{
+			Keywords: resultArticle[0].trail,
+			Number:   visitArticle,
+	}
+
+	// Encode respons JSON
+	responseJSON, err := json.Marshal(response)
 	if err != nil {
-		http.Error(w, "Error encoding result JSON", http.StatusInternalServerError)
-		return
+			http.Error(w, "Error encoding response JSON", http.StatusInternalServerError)
+			return
 	}
 
-	responseVisitJSON, err := json.Marshal(visitArticle)
-	if err != nil {
-		http.Error(w, "Error encoding visit JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Gabungkan respons JSON
-	responseJSON := append(responseResultJSON, responseVisitJSON...)
-
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Allow requests from this origin
+	// Set header dan kirim respons
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJSON)
@@ -89,6 +78,8 @@ func handleIDSRequest(w http.ResponseWriter, r *http.Request) {
 
 /* Fungsi BFS */
 func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CHECKPOINT 1!")
+
 	if r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -97,40 +88,51 @@ func handleBFSRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	awal := r.URL.Query().Get("query")
-	if awal == "" {
-		http.Error(w, "Query parameter is required", http.StatusBadRequest)
-		return
+	fmt.Println("CHECKPOINT 2!")
+
+	query := r.URL.Query().Get("query")
+	query2 := r.URL.Query().Get("query2")
+	if query == "" || query2 == "" {
+			// http.Error(w, "Both query parameters are required", http.StatusBadRequest)
+			// return
+			fmt.Println("ERROR QUERY PARAMETER")
 	}
 
-	akhir := r.URL.Query().Get("query2")
-	if akhir == "" {
-		http.Error(w, "Query parameter is required", http.StatusBadRequest)
-		return
+	fmt.Println("CHECKPOINT 3!")
+
+	// Panggil fungsi BFS dengan input yang valid
+	resultArticle, visitArticle := BFS(query, query2)
+
+	fmt.Println("CHECKPOINT 4!")
+
+	// Buat respons JSON dengan format yang diharapkan
+	response := struct {
+		Result []string `json:"result"`
+		Visit  int       `json:"visit"`
+	}{
+		Result: resultArticle[0].trail,
+		Visit:  visitArticle,
 	}
 
-	/* Menerima Return Dari BFS */
-	resultArticle, visitArticle := BFS(awal, akhir)
+	fmt.Println("CHECKPOINT 5!")
 
-	responseResultJSON, err := json.Marshal(resultArticle)
+	// Encode respons JSON
+	responseJSON, err := json.Marshal(response)
 	if err != nil {
-		http.Error(w, "Error encoding result JSON", http.StatusInternalServerError)
+		// http.Error(w, "Error encoding response JSON", http.StatusInternalServerError)
+		fmt.Println("ERROR RESPONSE JSON")
 		return
 	}
 
-	responseVisitJSON, err := json.Marshal(visitArticle)
-	if err != nil {
-		http.Error(w, "Error encoding visit JSON", http.StatusInternalServerError)
-		return
-	}
+	fmt.Println("CHECKPOINT 6!")
 
-	// Gabungkan respons JSON
-	responseJSON := append(responseResultJSON, responseVisitJSON...)
-
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // Allow requests from this origin
+	// Set header dan kirim respons
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJSON)
+
+	fmt.Println("CHECKPOINT 7!")
 }
 
 /* Fungsi Scrape */
