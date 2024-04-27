@@ -24,7 +24,7 @@ func IDSWrapper(start string, end string) ([]Node, int) {
 	for len(result) == 0 && i < 6 {
 		fmt.Println("Current depth : ", i)
 		IDSvisits = 0
-		result = IDS(bruh, end, i+1, true)
+		result = IDS(bruh, end, i, true)
 		i++
 	}
 	return result, IDSvisits

@@ -9,7 +9,6 @@ import (
 var BFSVisits int = 0
 
 func BFS(awal string, tujuan string) ([]Node, int) {
-	//debug
 	fmt.Println(awal)
 	fmt.Println(tujuan)
 	_depth := 0
